@@ -70,3 +70,4 @@ fastlane/test_output
 LeagueiOS.xcworkspace/
 Podfile.lock
 Pods
+.idea/

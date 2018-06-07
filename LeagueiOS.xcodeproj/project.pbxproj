@@ -19,6 +19,10 @@
 		9583837220C8152000B104AE /* DashboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9583837120C8152000B104AE /* DashboardViewController.swift */; };
 		9583837420C81FE600B104AE /* UserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9583837320C81FE600B104AE /* UserViewController.swift */; };
 		9583837620C8312100B104AE /* LeagueTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9583837520C8312100B104AE /* LeagueTableViewController.swift */; };
+		9583837820C8FA8400B104AE /* LeagueDashboardTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9583837720C8FA8400B104AE /* LeagueDashboardTableViewController.swift */; };
+		9583837B20C90FE200B104AE /* League.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9583837A20C90FE200B104AE /* League.swift */; };
+		9583837D20C9103D00B104AE /* Team.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9583837C20C9103D00B104AE /* Team.swift */; };
+		9583837F20C910EC00B104AE /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9583837E20C910EC00B104AE /* Player.swift */; };
 		C343CB5803E21979288AEC09 /* Pods_LeagueiOSTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA3E2A6BEBE5B5648234AC2E /* Pods_LeagueiOSTests.framework */; };
 		C89C91C00BA2049AA11910C4 /* Pods_LeagueiOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 57D05ADDEABCC31AFAEAD5F9 /* Pods_LeagueiOS.framework */; };
 /* End PBXBuildFile section */
@@ -62,6 +66,10 @@
 		9583837120C8152000B104AE /* DashboardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardViewController.swift; sourceTree = "<group>"; };
 		9583837320C81FE600B104AE /* UserViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserViewController.swift; sourceTree = "<group>"; };
 		9583837520C8312100B104AE /* LeagueTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeagueTableViewController.swift; sourceTree = "<group>"; };
+		9583837720C8FA8400B104AE /* LeagueDashboardTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeagueDashboardTableViewController.swift; sourceTree = "<group>"; };
+		9583837A20C90FE200B104AE /* League.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = League.swift; sourceTree = "<group>"; };
+		9583837C20C9103D00B104AE /* Team.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Team.swift; sourceTree = "<group>"; };
+		9583837E20C910EC00B104AE /* Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
 		E1C7D2A6956D53B83F753DFA /* Pods-LeagueiOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LeagueiOSTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-LeagueiOSTests/Pods-LeagueiOSTests.debug.xcconfig"; sourceTree = "<group>"; };
 		E38A623B63DEDDC34D9D4CEE /* Pods-LeagueiOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LeagueiOSTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-LeagueiOSTests/Pods-LeagueiOSTests.release.xcconfig"; sourceTree = "<group>"; };
 		E9AABDC9CD0C02AE39AB526D /* Pods-LeagueiOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LeagueiOS.release.xcconfig"; path = "Pods/Target Support Files/Pods-LeagueiOS/Pods-LeagueiOS.release.xcconfig"; sourceTree = "<group>"; };
@@ -145,10 +153,12 @@
 		958375E420C7EFB900D66E66 /* LeagueiOS */ = {
 			isa = PBXGroup;
 			children = (
+				9583837920C90FCC00B104AE /* Model */,
 				958375E520C7EFB900D66E66 /* AppDelegate.swift */,
 				958375E720C7EFB900D66E66 /* LoginViewController.swift */,
 				9583837320C81FE600B104AE /* UserViewController.swift */,
 				958375E920C7EFB900D66E66 /* Main.storyboard */,
+				9583837720C8FA8400B104AE /* LeagueDashboardTableViewController.swift */,
 				9583837520C8312100B104AE /* LeagueTableViewController.swift */,
 				958375EC20C7EFBE00D66E66 /* Assets.xcassets */,
 				958375EE20C7EFBE00D66E66 /* LaunchScreen.storyboard */,
@@ -175,6 +185,24 @@
 				9583760720C7EFBE00D66E66 /* Info.plist */,
 			);
 			path = LeagueiOSUITests;
+			sourceTree = "<group>";
+		};
+		9583837920C90FCC00B104AE /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				9583838020C9115800B104AE /* LeagueModel */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		9583838020C9115800B104AE /* LeagueModel */ = {
+			isa = PBXGroup;
+			children = (
+				9583837A20C90FE200B104AE /* League.swift */,
+				9583837C20C9103D00B104AE /* Team.swift */,
+				9583837E20C910EC00B104AE /* Player.swift */,
+			);
+			path = LeagueModel;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -394,10 +422,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9583837B20C90FE200B104AE /* League.swift in Sources */,
 				958375E820C7EFB900D66E66 /* LoginViewController.swift in Sources */,
+				9583837820C8FA8400B104AE /* LeagueDashboardTableViewController.swift in Sources */,
 				9583837420C81FE600B104AE /* UserViewController.swift in Sources */,
+				9583837D20C9103D00B104AE /* Team.swift in Sources */,
 				9583837220C8152000B104AE /* DashboardViewController.swift in Sources */,
 				958375E620C7EFB900D66E66 /* AppDelegate.swift in Sources */,
+				9583837F20C910EC00B104AE /* Player.swift in Sources */,
 				9583837620C8312100B104AE /* LeagueTableViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

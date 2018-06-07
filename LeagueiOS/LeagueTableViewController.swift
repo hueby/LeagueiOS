@@ -10,28 +10,34 @@ import UIKit
 import FirebaseAuth
 import FirebaseDatabase
 
-class LeagueTableViewController: UITableViewController {
+class LeagueTableViewController: UITableViewController, LeagueDelegate {
+    
+    var leagueIdentifier: String = ""
+    var league: League?
 
-    var leagueList = [NSDictionary]()
+    func leagueUpdated(league: League) {
+        self.league! = league
+        self.tableView.reloadData()
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        let ref = Database.database().reference()
-        let league = ref.child("events").child("league")
-        league.observeSingleEvent(of: .value, with: { (snapshot) in
-            let value = snapshot.value as? NSDictionary
-            for val in value!.allKeys {
-                let leag = val as? String
-                let _leag = value!.object(forKey: leag!) as! NSDictionary
-                let players = _leag["players"] as! NSDictionary
-                let keys = players.allKeys as NSArray
-                if keys.contains(Auth.auth().currentUser!.uid) {
-                    self.leagueList.append(_leag)
-                }
-            }
-            self.tableView.reloadData();
-        })
+        
+        self.league = League(withLeagueIdentifier: leagueIdentifier, name: "")
+        self.league!.leagueDelegate = self
+        
+//        let ref = Database.database().reference()
+//        let teams = ref.child("events").child("league").child(self.leagueIdentifier).child("teams")
+//        teams.observe(DataEventType.value, with: { (snapshot) in
+//            self.teamList = [String]()
+//            let rawTeams = snapshot.value as? NSArray
+//            for teams in rawTeams! {
+//                let obj: NSDictionary = teams as! NSDictionary
+//                self.teamList.append(obj.value(forKey: "name") as! String)
+//
+//            }
+//            self.tableView.reloadData();
+//        })
     }
     
     // MARK: - Table view data source
@@ -43,16 +49,23 @@ class LeagueTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        return self.leagueList.count
+        return self.league!.leagueTeams.count
     }
 
     
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "leagueCell", for: indexPath)
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> TeamCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "teamCell", for: indexPath) as! TeamCell
 
-        let league = self.leagueList[indexPath.row]
-        cell.textLabel?.text = league.object(forKey: "name") as? String
+        let team = self.league!.leagueTeams[indexPath.row]
+        cell.teamLabel.text = team.name
+        if self.league!.currentPlayer?.teamName == team.name {
+            cell.teamLabel.font = UIFont.boldSystemFont(ofSize: cell.teamLabel.font.pointSize)
+        }
         
         return cell
     }
+}
+
+class TeamCell : UITableViewCell {
+    @IBOutlet weak var teamLabel: UILabel!
 }

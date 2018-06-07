@@ -12,35 +12,76 @@ import FirebaseDatabase
 
 class DashboardViewController: UITableViewController {
     
-    var eventList = [[String: [NSDictionary]]]()
+    struct EventDetail {
+        let name: String
+        let identifier: String
+    }
+    
+    struct Events {
+        let type: String
+        let ev: [EventDetail]
+    }
+    
+    var eventList: [[Events]] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         let ref = Database.database().reference()
         let league = ref.child("events")
-        league.observeSingleEvent(of: .value, with: { (snapshot) in
-            let value = snapshot.value as? NSDictionary
+        league.observe(DataEventType.value) { (snapshot) in
+            self.eventList = []
+            let events = snapshot.value as? [String: NSDictionary]
             
-            for event in value!.allKeys {
-                var data = [NSDictionary]()
-            
-                let events = value![event] as? NSDictionary
-                for evs in events!.allKeys {
-                    let players = events!.value(forKeyPath: "\(evs).players") as! NSDictionary
-                    let playerArray: NSArray = players.allKeys as NSArray
-                    if(playerArray.contains(Auth.auth().currentUser!.uid)){
-                        data.append([evs: events!.value(forKeyPath: "\(evs).name") as! String])
-                    }
+            for (key, value) in events! {
+                // event = league OR event = tournament
+                var data: [EventDetail] = []
+                switch key {
+                case "league":
+                    self.searchLeague(value: value, data: &data);
+                    break;
+                case "tournament":
+                    self.searchTournament(value: value, data: &data);
+                    break;
+                default:
+                    break;
                 }
+                
+
                 if(data.count != 0) {
-                    let ev = [event as! String: data]
-                    self.eventList.append(ev)
+                    let ev = Events(type: key, ev: data)
+                    self.eventList.append([ev])
                 }
             }
             
             self.tableView.reloadData()
-        })
+        }
+    }
+    
+    func searchLeague(value: NSDictionary, data: inout [EventDetail]) {
+        for (lKey, _) in value {
+            let leag = value[lKey] as! NSDictionary
+            let teams = leag["teams"] as! NSArray
+            for t in teams {
+                let team = t as! NSDictionary
+                let players = team["players"] as! NSArray
+                if(players.contains(Auth.auth().currentUser!.uid)){
+                    let eD = EventDetail(name: leag["name"] as! String, identifier: lKey as! String)
+                    data.append(eD)
+                }
+            }
+        }
+    }
+    
+    func searchTournament(value: NSDictionary, data: inout [EventDetail]) {
+        for (lKey, _) in value {
+            let tour = value[lKey] as! NSDictionary
+            let players = tour["players"] as! NSDictionary
+            if (players.allKeys as NSArray).contains(Auth.auth().currentUser!.uid) {
+                let eD = EventDetail(name: tour["name"] as! String, identifier: lKey as! String)
+                data.append(eD)
+            }
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -76,8 +117,9 @@ class DashboardViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        let event = self.eventList[section] as NSDictionary
-        switch event.allKeys.first as! String {
+        let event = self.eventList[section].first
+
+        switch event?.type {
         case "league":
             return "Liga"
         case "tournament":
@@ -90,18 +132,32 @@ class DashboardViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> EventTableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "dashboardCell", for: indexPath) as! EventTableViewCell
         
-        let event = self.eventList[indexPath.section] as NSDictionary
-        let path = event.allKeys.first as! String
-        let detailArray: NSArray = event.object(forKey: path) as! NSArray
-        let detailDict: NSDictionary = detailArray[0] as! NSDictionary
-        let detail = detailDict.allValues[indexPath.row] as! String
-        cell.eventLabel.text = detail
-        cell.identifier = event.allKeys.first as! String
-        cell.type = path
-        
-        print(cell.type)
+        let events = self.eventList[indexPath.section].first
+
+        cell.type = events!.type
+        cell.eventLabel.text = events!.ev[indexPath.row].name
+        cell.identifier = events!.ev[indexPath.row].identifier
         
         return cell
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let cell = tableView.cellForRow(at: indexPath) as! EventTableViewCell
+        
+        let storyboard = UIStoryboard.init(name: "Main", bundle: nil)
+        
+        switch(cell.type) {
+        case "league":
+            let lVC = storyboard.instantiateViewController(withIdentifier: "leagueDashboard") as! LeagueDashboardTableViewController
+            lVC.leagueIdentifier = cell.identifier
+            lVC.title = cell.eventLabel.text
+            self.navigationController?.pushViewController(lVC, animated: true)
+            break;
+        case "tournament":
+            break;
+        default:
+            break
+        }
     }
 }
 
